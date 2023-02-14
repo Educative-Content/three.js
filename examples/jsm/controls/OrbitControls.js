@@ -21,13 +21,12 @@ const _endEvent = { type: 'end' };
 
 class OrbitControls extends EventDispatcher {
 
-	constructor( object, domElement ) {
+	constructor( object, _domElement ) {
 
 		super();
 
 		this.object = object;
-		this.domElement = domElement;
-		this.domElement.style.touchAction = 'none'; // disable touch scroll
+		this.domElement = null;
 
 		// Set to false to disable this control
 		this.enabled = true;
@@ -296,17 +295,35 @@ class OrbitControls extends EventDispatcher {
 
 		}();
 
-		this.dispose = function () {
+		this.connect = function ( domElement ) {
 
-			scope.domElement.removeEventListener( 'contextmenu', onContextMenu );
+			if ( domElement === document ) console.error( 'THREE.OrbitControls: "document" should not be used as the target "domElement". Please use "renderer.domElement" instead.' );
 
-			scope.domElement.removeEventListener( 'pointerdown', onPointerDown );
-			scope.domElement.removeEventListener( 'pointercancel', onPointerCancel );
-			scope.domElement.removeEventListener( 'wheel', onMouseWheel );
+			scope.domElement = domElement;
+			scope.domElement.style.touchAction = 'none'; // disable touch scroll
 
-			scope.domElement.removeEventListener( 'pointermove', onPointerMove );
-			scope.domElement.removeEventListener( 'pointerup', onPointerUp );
+			scope.domElement.addEventListener( 'contextmenu', onContextMenu );
 
+			scope.domElement.addEventListener( 'pointerdown', onPointerDown );
+			scope.domElement.addEventListener( 'pointercancel', onPointerCancel );
+			scope.domElement.addEventListener( 'wheel', onMouseWheel, { passive: false } );
+
+		};
+
+		this.disconnect = function () {
+
+			if ( scope.domElement !== null ) {
+
+				scope.domElement.removeEventListener( 'contextmenu', onContextMenu );
+
+				scope.domElement.removeEventListener( 'pointerdown', onPointerDown );
+				scope.domElement.removeEventListener( 'pointercancel', onPointerCancel );
+				scope.domElement.removeEventListener( 'wheel', onMouseWheel );
+
+				scope.domElement.removeEventListener( 'pointermove', onPointerMove );
+				scope.domElement.removeEventListener( 'pointerup', onPointerUp );
+
+			}
 
 			if ( scope._domElementKeyEvents !== null ) {
 
@@ -316,6 +333,12 @@ class OrbitControls extends EventDispatcher {
 			}
 
 			//scope.dispatchEvent( { type: 'dispose' } ); // should this be added here?
+
+		};
+
+		this.dispose = function () {
+
+			scope.disconnect();
 
 		};
 
@@ -1251,11 +1274,11 @@ class OrbitControls extends EventDispatcher {
 
 		//
 
-		scope.domElement.addEventListener( 'contextmenu', onContextMenu );
+		if ( _domElement ) {
 
-		scope.domElement.addEventListener( 'pointerdown', onPointerDown );
-		scope.domElement.addEventListener( 'pointercancel', onPointerCancel );
-		scope.domElement.addEventListener( 'wheel', onMouseWheel, { passive: false } );
+			this.connect( _domElement );
+
+		}
 
 		// force an update at start
 
