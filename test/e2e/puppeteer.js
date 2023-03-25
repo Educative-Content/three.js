@@ -54,20 +54,6 @@ const exceptionList = [
 
 	'webgl_worker_offscreencanvas', // in a worker, not robust
 
-	// Windows-Linux text rendering differences
-	// TODO: Fix these by setting a font in Puppeteer -- this can also fix a bunch of 0.1%-0.2% examples
-	'css3d_periodictable',
-	'misc_controls_pointerlock',
-	'misc_uv_tests',
-	'webgl_camera_logarithmicdepthbuffer',
-	'webgl_effects_ascii',
-	'webgl_loader_pdb',
-	'webgl_multiple_canvases_circle',
-	'webgl_multiple_elements_text',
-	'webgl_nodes_playground',
-	'webgl_shaders_tonemapping',
-	'webgpu_nodes_playground',
-
 	// Unknown
 	// TODO: most of these can be fixed just by increasing idleTime and parseTime
 	'webgl_animation_skinning_blending',
@@ -98,7 +84,7 @@ const exceptionList = [
 
 const chromiumRevision = '1095492'; // Chromium 111.0.5556.0, Puppeteer 19.7.0, https://github.com/puppeteer/puppeteer/releases/tag/puppeteer-core-v19.7.0
 
-const port = 1234;
+const port = 8234;
 const pixelThreshold = 0.1; // threshold error in one pixel
 const maxDifferentPixels = 0.3; // at most 0.3% different pixels
 
@@ -184,7 +170,7 @@ async function main() {
 
 	/* Launch browser */
 
-	const flags = [ '--hide-scrollbars', '--enable-unsafe-webgpu' ];
+	const flags = [ '--font-render-hinting=none', '--hide-scrollbars', '--enable-unsafe-webgpu' ];
 	flags.push( '--enable-features=Vulkan', '--use-gl=swiftshader', '--use-angle=swiftshader', '--use-vulkan=swiftshader', '--use-webgpu-adapter=swiftshader' );
 	// if ( process.platform === 'linux' ) flags.push( '--enable-features=Vulkan,UseSkiaRenderer', '--use-vulkan=native', '--disable-vulkan-surface', '--disable-features=VaapiVideoDecoder', '--ignore-gpu-blocklist', '--use-angle=vulkan' );
 
@@ -484,6 +470,8 @@ async function makeAttempt( pages, failedScreenshots, cleanPage, isMakeScreensho
 			} */ // TODO: fix this
 
 		}
+
+		if ( file === 'webgl_multiple_elements_text' ) await ( await jimp.read( await page.screenshot() ) ).writeAsync( 'test/e2e/output-screenshots/test-image-determining-font.png' );
 
 		const screenshot = ( await jimp.read( await page.screenshot() ) ).scale( 1 / viewScale ).quality( jpgQuality );
 
