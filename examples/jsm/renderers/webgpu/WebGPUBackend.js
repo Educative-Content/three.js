@@ -8,6 +8,7 @@ import { GPUFeatureName, GPUTextureFormat, GPULoadOp, GPUStoreOp, GPUIndexFormat
 
 import WGSLNodeBuilder from './nodes/WGSLNodeBuilder.js';
 import Backend from '../common/Backend.js';
+import CommonUniformBuffer from '../common/CommonUniformBuffer.js';
 
 import WebGPUUtils from './utils/WebGPUUtils.js';
 import WebGPUAttributeUtils from './utils/WebGPUAttributeUtils.js';
@@ -55,6 +56,7 @@ class WebGPUBackend extends Backend {
 		this.pipelineUtils = new WebGPUPipelineUtils( this );
 		this.textureUtils = new WebGPUTextureUtils( this );
 		this.occludedResolveCache = new Map();
+		this.commonUniformBuffer = null;
 
 	}
 
@@ -490,7 +492,11 @@ class WebGPUBackend extends Backend {
 
 		}
 
+		this.bindingUtils.endPass();
+
 		this.device.queue.submit( [ renderContextData.encoder.finish() ] );
+
+		//this.device.queue.onSubmittedWorkDone().then( () => { performance.mark( 'render-end' ); } );
 
 		//
 
@@ -753,6 +759,9 @@ class WebGPUBackend extends Backend {
 		const groupData = this.get( computeGroup );
 
 		groupData.passEncoderGPU.end();
+
+		this.bindingUtils.endPass();
+
 		this.device.queue.submit( [ groupData.cmdEncoderGPU.finish() ] );
 
 	}
@@ -1018,7 +1027,20 @@ class WebGPUBackend extends Backend {
 
 	createNodeBuilder( object, renderer, scene = null ) {
 
-		return new WGSLNodeBuilder( object, renderer, scene );
+		if ( this.commonUniformBuffer === null ) {
+
+			const alignment = this.device.limits.minUniformBufferOffsetAlignment;
+			const size = this.renderer.commonBufferSize;
+
+			if ( size > 0 ) {
+
+				this.commonUniformBuffer = new CommonUniformBuffer( 256 * size, alignment );
+
+			}
+
+		}
+
+		return new WGSLNodeBuilder( object, renderer, scene, this.commonUniformBuffer );
 
 	}
 
