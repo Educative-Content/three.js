@@ -57,9 +57,6 @@ class Renderer {
 
 		this.sortObjects = true;
 
-		this.depth = true;
-		this.stencil = true;
-
 		this.clippingPlanes = [];
 
 		this.info = new Info();
@@ -82,10 +79,7 @@ class Renderer {
 		this._textures = null;
 		this._background = null;
 
-		const p = Object.assign( {}, parameters );
-		p.domElement = this.domElement;
-
-		this._defaultCanvasRenderTarget = new CanvasRenderTarget( p );
+		this._defaultCanvasRenderTarget = new CanvasRenderTarget( Object.assign( {}, parameters, { domElement: this.domElement } ) );
 		this._currentRenderContext = null;
 
 		this._opaqueSort = null;
@@ -382,7 +376,8 @@ class Renderer {
 		renderContext.viewport = renderContext.viewportValue.equals( _screen ) === false;
 
 		renderContext.scissorValue.copy( scissor ).multiplyScalar( pixelRatio ).floor();
-		renderContext.scissor = this._defaultCanvasRenderTarget._scissorTest && renderContext.scissorValue.equals( _screen ) === false;
+//		renderContext.scissor = this._defaultCanvasRenderTarget._scissorTest && renderContext.scissorValue.equals( _screen ) === false;
+		renderContext.scissor = renderTarget._scissorTest && renderContext.scissorValue.equals( _screen ) === false;
 		renderContext.scissorValue.width >>= activeMipmapLevel;
 		renderContext.scissorValue.height >>= activeMipmapLevel;
 
@@ -417,11 +412,10 @@ class Renderer {
 
 			renderContext.textures = null;
 			renderContext.depthTexture = null;
-			renderContext.renderTarget = renderTarget;
-			renderContext.depth = renderTarget.depth;
-			renderContext.stencil = renderTarget.stencil;
 			renderContext.width = renderTarget.domElement.width;
 			renderContext.height = renderTarget.domElement.height;
+			renderContext.depth = renderTarget.depth;
+			renderContext.stencil = renderTarget.stencil;
 			renderContext.sampleCount = renderTarget.sampleCount;
 
 		} else {
@@ -440,7 +434,6 @@ class Renderer {
 		}
 
 		renderContext.renderTarget = renderTarget;
-
 		renderContext.width >>= activeMipmapLevel;
 		renderContext.height >>= activeMipmapLevel;
 		renderContext.activeCubeFace = activeCubeFace;
@@ -598,7 +591,7 @@ class Renderer {
 
 	setScissor( x, y, width, height ) {
 
-		this._defaultCanvasRenderTarget.setScissor( x, y, height );
+		this._defaultCanvasRenderTarget.setScissor( x, y, width, height );
 
 	}
 
@@ -662,6 +655,29 @@ class Renderer {
 	setClearDepth( depth ) {
 
 		this._clearDepth = depth;
+
+	}
+
+	get depth() {
+
+		return this._defaultCanvasRenderTarget.depth;
+
+	}
+
+	set depth( value ) {
+
+		this._defaultCanvasRenderTarget.depth = value;
+
+	}
+	get stencil() {
+
+		return this._defaultCanvasRenderTarget.stencil;
+
+	}
+
+	set stencil( value ) {
+
+		this._defaultCanvasRenderTarget.stencil = value;
 
 	}
 
