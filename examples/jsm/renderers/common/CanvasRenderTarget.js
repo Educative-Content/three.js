@@ -1,8 +1,10 @@
-import { DepthTexture, Vector4, REVISION, createCanvasElement } from 'three';
+import { DepthTexture, EventDispatcher, Vector4, REVISION, createCanvasElement } from 'three';
 
-class CanvasRenderTarget {
+class CanvasRenderTarget extends EventDispatcher {
 
 	constructor( parameters ) {
+
+		super();
 
 		this.isCanvasRenderTarget = true;
 
@@ -179,6 +181,12 @@ class CanvasRenderTarget {
 
 		viewport.minDepth = minDepth;
 		viewport.maxDepth = maxDepth;
+
+	}
+
+	dispose() {
+
+		this.dispatchEvent( { type: 'dispose' } );
 
 	}
 
