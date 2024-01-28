@@ -9,7 +9,7 @@
 			#container {
 				padding-top: 3em;
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+				grid-template-columns: repeat( auto-fill, minmax( 200px, 1fr ) );
 				justify-items: center;
 				column-gap: 10px;
 				row-gap: 10px;
@@ -136,8 +136,8 @@
 					mesh,
 					scene,
 					renderTarget,
-					rotateX: Math.random() - 0.5,
-					rotateY: Math.random() - 0.5,
+					rotateX: ( Math.random() - 0.5 ) / 1000,
+					rotateY: ( Math.random() - 0.5 ) / 1000,
 					domElement: renderTarget.getDomElement()
 				} );
 
@@ -173,12 +173,12 @@
 				);
 
 				materials.push(
-					new MeshPhongNodeMaterial( { color: 0x00ee00 }),
-					new MeshPhongNodeMaterial( { color: 0xee0000 }),
-					new MeshPhongNodeMaterial( { color: 0xeeee00 }),
-					new MeshPhongNodeMaterial( { color: 0x00eeee }),
-					new MeshPhongNodeMaterial( { color: 0xee00ee }),
-					new MeshPhongNodeMaterial( { color: 0x0000ee }),
+					new MeshPhongNodeMaterial( { color: 0x00ee00 } ),
+					new MeshPhongNodeMaterial( { color: 0xee0000 } ),
+					new MeshPhongNodeMaterial( { color: 0xeeee00 } ),
+					new MeshPhongNodeMaterial( { color: 0x00eeee } ),
+					new MeshPhongNodeMaterial( { color: 0xee00ee } ),
+					new MeshPhongNodeMaterial( { color: 0x0000ee } ),
 				);
 
 			}
@@ -221,8 +221,8 @@
 					// skip rendering of offscreen
 					if ( parameters.observed && offScreen.has( canvas.domElement ) ) continue;
 
-					canvas.mesh.rotation.y = ( time / 1000 ) * canvas.rotateX;
-					canvas.mesh.rotation.x = ( time / 1000 ) * canvas.rotateY;
+					canvas.mesh.rotation.y = time * canvas.rotateX;
+					canvas.mesh.rotation.x = time * canvas.rotateY;
 
 					renderer.setRenderTarget( canvas.renderTarget );
 					renderer.render( canvas.scene, camera );
