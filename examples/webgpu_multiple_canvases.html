@@ -41,25 +41,71 @@
 
 			import * as THREE from 'three';
 
-			import { MeshBasicNodeMaterial } from 'three/nodes';
+			import { MeshPhongNodeMaterial } from 'three/nodes';
 			import WebGPU from 'three/addons/capabilities/WebGPU.js';
+
+			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
 			import WebGPURenderer from 'three/addons/renderers/webgpu/WebGPURenderer.js';
 			import CanvasRenderTarget from 'three/addons/renderers/common/CanvasRenderTarget.js';
 
-			let camera, renderer, torus, torusKnot;
-			let canvasRenderTargets = [];
-			let scenes = [];
-			let objects = [];
+			import Stats from 'three/addons/libs/stats.module.js';
 
+			let camera, renderer;
+			let stats;
+
+			const geometries = [];
+			const materials = [];
+			const canvases = [];
+
+			const container = document.getElementById( 'container' );
+
+			const offScreen = new Set();
+
+			const observer = new IntersectionObserver( ( entries ) => {
+
+				for ( let i = 0; i < entries.length; i ++ ) {
+
+					const entry = entries[ i ];
+
+					if ( entry.intersectionRatio === 0 ) {
+
+						offScreen.add( entry.target );
+
+					} else {
+
+						offScreen.delete( entry.target );
+
+					}
+
+				}
+
+			} );
+
+			const parameters = {
+				canvases: 9,
+				observed: false
+			};
+
+			initGUI();
 			init();
+
+			function initGUI() {
+
+				const gui = new GUI();
+				gui.add( parameters, 'canvases', 1, 500 ).step( 1 );
+				gui.add( parameters, 'observed' );
+
+			}
 
 			function makeCanvasRenderTarget( container ) {
 
-				const canvasRenderTarget = new CanvasRenderTarget( { antialias: true } );
+				const canvasRenderTarget = new CanvasRenderTarget( { antialias: Math.random() < 0.5 ? true : false } );
 
 				const domElement = canvasRenderTarget.getDomElement();
-				container.appendChild( canvasRenderTarget.getDomElement() );
+
+				container.appendChild( domElement );
+				observer.observe( domElement );
 
 				canvasRenderTarget.setPixelRatio( window.devicePixelRatio );
 				canvasRenderTarget.setSize( domElement.clientWidth, domElement.clientHeight );
@@ -68,17 +114,32 @@
 
 			}
 
-			function makeScene( srcObject ) {
+			function makeScene() {
 
-				const object = srcObject.clone();
 				const scene = new THREE.Scene();
+				const light = new THREE.DirectionalLight();
 
-				objects.push( object );
-				scenes.push( scene );
+				const mesh = new THREE.Mesh(
+					geometries[ Math.floor( Math.random() * geometries.length ) ],
+					materials[ Math.floor( Math.random() * materials.length ) ]
+				);
 
 				scene.background = new THREE.Color( 0x222222 );
 
-				scene.add( object );
+				light.position.set( -1, 1, 1 );
+				scene.add( mesh );
+				scene.add( light );
+
+				const renderTarget = makeCanvasRenderTarget( container );
+
+				canvases.push( {
+					mesh,
+					scene,
+					renderTarget,
+					rotateX: Math.random() - 0.5,
+					rotateY: Math.random() - 0.5,
+					domElement: renderTarget.getDomElement()
+				} );
 
 			}
 
@@ -95,54 +156,76 @@
 				renderer = new WebGPURenderer( { antialias: true } );
 				renderer.setAnimationLoop( render );
 
-				// create canvas render target
-
-				const container = document.getElementById( 'container' );
-
-				for ( let i = 0; i < 9; i ++ ) {
-
-					canvasRenderTargets.push( makeCanvasRenderTarget( container ) );
-
-				}
+				stats = new Stats();
+				document.body.appendChild( stats.dom );
 
 				// Scene setup
 
 				camera = new THREE.PerspectiveCamera( 70, 1, 0.1, 50 );
 				camera.position.z = 4;
 
-				torus = new THREE.Mesh(
+				geometries.push(
 					new THREE.TorusGeometry( 1, 0.3, 128, 32 ),
-					new MeshBasicNodeMaterial( { color: 0x008800 })
-				);
-
-				torusKnot = new THREE.Mesh(
 					new THREE.TorusKnotGeometry( 1, 0.3, 128, 32 ),
-					new MeshBasicNodeMaterial( { color: 0x880000 })
+					new THREE.IcosahedronGeometry(),
+					new THREE.BoxGeometry(),
+					new THREE.TetrahedronGeometry()
 				);
 
-
-				makeScene( torus );
-				makeScene( torusKnot );
-				makeScene( torus );
-
-				makeScene( torusKnot );
-				makeScene( torus );
-				makeScene( torusKnot );
-
-				makeScene( torus );
-				makeScene( torusKnot );
-				makeScene( torus );
+				materials.push(
+					new MeshPhongNodeMaterial( { color: 0x00ee00 }),
+					new MeshPhongNodeMaterial( { color: 0xee0000 }),
+					new MeshPhongNodeMaterial( { color: 0xeeee00 }),
+					new MeshPhongNodeMaterial( { color: 0x00eeee }),
+					new MeshPhongNodeMaterial( { color: 0xee00ee }),
+					new MeshPhongNodeMaterial( { color: 0x0000ee }),
+				);
 
 			}
 
 			function render( time ) {
 
-				for ( let i = 0; i < 9; i ++ ) {
+				stats.update();
 
-					objects[ i ].rotation.y = ( time / 1000 ) * .4 * ( i + 1 ) * ( i % 2 ? 1 : -1 );
+				const diff = canvases.length - parameters.canvases;
 
-					renderer.setRenderTarget( canvasRenderTargets[ i ] );
-					renderer.render( scenes[ i ], camera );
+				if ( diff > 0 ) {
+
+					for ( let i = 0; i < diff; i ++ ) {
+
+						const canvas = canvases.pop();
+						const domElement = canvas.renderTarget.getDomElement();
+
+						observer.unobserve( domElement );
+						offScreen.delete( domElement );
+
+						domElement.remove();
+						canvas.renderTarget.dispose();
+
+					}
+
+				} else if ( diff < 0 ) {
+
+					for ( let i = 0; i < - diff; i ++ ) {
+
+						makeScene();
+
+					}
+
+				}
+
+				for ( let i = 0; i < canvases.length; i ++ ) {
+
+					const canvas = canvases[ i ];
+
+					// skip rendering of offscreen
+					if ( parameters.observed && offScreen.has( canvas.domElement ) ) continue;
+
+					canvas.mesh.rotation.y = ( time / 1000 ) * canvas.rotateX;
+					canvas.mesh.rotation.x = ( time / 1000 ) * canvas.rotateY;
+
+					renderer.setRenderTarget( canvas.renderTarget );
+					renderer.render( canvas.scene, camera );
 
 				}
 
