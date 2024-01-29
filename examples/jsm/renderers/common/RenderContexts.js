@@ -9,7 +9,7 @@ class RenderContexts {
 
 	}
 
-	get( scene, camera, renderTarget = null ) {
+	get( scene, camera, renderTarget ) {
 
 		const chainKey = [ scene, camera ];
 
@@ -40,7 +40,7 @@ class RenderContexts {
 
 		}
 
-		if ( renderTarget !== null ) renderState.sampleCount = renderTarget.samples === 0 ? 1 : renderTarget.samples;
+		if ( ! renderTarget.isCanvasRenderTarget ) renderState.sampleCount = renderTarget.samples === 0 ? 1 : renderTarget.samples;
 
 		return renderState;
 

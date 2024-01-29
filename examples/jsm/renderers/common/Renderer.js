@@ -427,7 +427,6 @@ class Renderer {
 			renderContext.height = renderTargetData.height;
 			renderContext.depth = renderTarget.depthBuffer;
 			renderContext.stencil = renderTarget.stencilBuffer;
-			renderContext.sampleCount = renderTarget.samples === 0 ? 1 : renderTarget.samples;
 
 		}
 
