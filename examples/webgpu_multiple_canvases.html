@@ -102,7 +102,7 @@
 
 				const canvasRenderTarget = new CanvasRenderTarget( { antialias: Math.random() < 0.5 ? true : false } );
 
-				const domElement = canvasRenderTarget.getDomElement();
+				const domElement = canvasRenderTarget.domElement;
 
 				container.appendChild( domElement );
 				observer.observe( domElement );
@@ -138,7 +138,7 @@
 					renderTarget,
 					rotateX: ( Math.random() - 0.5 ) / 1000,
 					rotateY: ( Math.random() - 0.5 ) / 1000,
-					domElement: renderTarget.getDomElement()
+					domElement: renderTarget.domElement
 				} );
 
 			}
@@ -194,7 +194,7 @@
 					for ( let i = 0; i < diff; i ++ ) {
 
 						const canvas = canvases.pop();
-						const domElement = canvas.renderTarget.getDomElement();
+						const domElement = canvas.renderTarget.domElement;
 
 						observer.unobserve( domElement );
 						offScreen.delete( domElement );

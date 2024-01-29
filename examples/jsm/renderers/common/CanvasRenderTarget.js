@@ -10,7 +10,7 @@ class CanvasRenderTarget extends EventDispatcher {
 
 		this.canvas = parameters.canvas;
 		this.context = parameters.context;
-		this.domElement = parameters.domElement;
+		this._domElement = parameters.domElement;
 		this.alpha = ( parameters.alpha === undefined ) ? true : parameters.alpha;
 
 		this.antialias = ( parameters.antialias === true );
@@ -42,9 +42,9 @@ class CanvasRenderTarget extends EventDispatcher {
 
 	}
 
-	getDomElement() {
+	get domElement() {
 
-		let domElement = this.domElement;
+		let domElement = this._domElement;
 
 		if ( ! domElement ) {
 
@@ -53,7 +53,7 @@ class CanvasRenderTarget extends EventDispatcher {
 			// OffscreenCanvas does not have setAttribute, see #22811
 			if ( 'setAttribute' in domElement ) domElement.setAttribute( 'data-engine', `three.js r${REVISION} webgpu` );
 
-			this.domElement = domElement;
+			this._domElement = domElement;
 
 		}
 
