@@ -15,10 +15,20 @@
 				row-gap: 10px;
 			}
 
-			#container canvas {
+			#container > div {
+				position: relative;
+				border: 1px solid white;
+			}
+
+			canvas {
 				width: 200px;
 				height: 200px;
-				border: 1px solid white;
+			}
+
+			.label {
+				position: absolute;
+				color: white;
+				bottom: 0;
 			}
 		</style>
 	</head>
@@ -107,7 +117,17 @@
 
 				const domElement = canvasRenderTarget.domElement;
 
-				container.appendChild( domElement );
+				const frame = document.createElement( 'div' );
+				const label = document.createElement( 'div' );
+
+				label.innerText = 'color space ' + ( canvasRenderTarget.outputColorSpace || 'none' ) + ( canvasRenderTarget.antialias ? ' antialias' : '' );
+				label.classList.add( 'label' );
+
+				frame.appendChild( label );
+				frame.appendChild( domElement );
+
+				container.appendChild( frame );
+
 				observer.observe( domElement );
 
 				canvasRenderTarget.setPixelRatio( window.devicePixelRatio );
