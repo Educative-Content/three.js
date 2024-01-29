@@ -1,4 +1,4 @@
-import { DepthTexture, EventDispatcher, Vector4, REVISION, createCanvasElement } from 'three';
+import { EventDispatcher, Vector4, REVISION, createCanvasElement } from 'three';
 
 class CanvasRenderTarget extends EventDispatcher {
 
@@ -26,8 +26,6 @@ class CanvasRenderTarget extends EventDispatcher {
 		}
 
 		this.samples = this.sampleCount;
-
-		this.depthTexture = new DepthTexture();
 
 		this.depth = true;
 		this.stencil = true;

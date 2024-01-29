@@ -149,7 +149,7 @@ class WebGPUBackend extends Backend {
 					view: null
 				} ],
 				depthStencilAttachment: {
-					view: this.textureUtils.getDepthBuffer( canvasRenderTarget, renderer.depth, renderer.stencil ).createView()
+					view: this.textureUtils.getDepthBuffer( canvasRenderTarget ).createView()
 				}
 			};
 
@@ -1277,7 +1277,7 @@ class WebGPUBackend extends Backend {
 
 			if ( texture.isDepthTexture ) {
 
-				sourceGPU = this.textureUtils.getDepthBuffer( canvasRenderTarget, renderContext.depth, renderContext.stencil );
+				sourceGPU = this.get( canvasRenderTarget ).depthTextureGPU;
 
 			} else {
 
