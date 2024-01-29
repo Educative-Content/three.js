@@ -3,7 +3,7 @@ import {
 } from './WebGPUConstants.js';
 
 import {
-	CubeTexture, Texture,
+	CubeTexture, Texture, Vector2,
 	NearestFilter, NearestMipmapNearestFilter, NearestMipmapLinearFilter,
 	RepeatWrapping, MirroredRepeatWrapping,
 	RGB_ETC2_Format, RGBA_ETC2_EAC_Format,
@@ -29,6 +29,7 @@ const _compareToWebGPU = {
 };
 
 const _flipMap = [ 0, 1, 3, 2, 4, 5 ];
+const _vector2 = new Vector2();
 
 class WebGPUTextureUtils {
 
@@ -243,7 +244,7 @@ class WebGPUTextureUtils {
 	getBuffer( canvasRenderTarget, format, label ) {
 
 		const backend = this.backend;
-		const { width, height } = backend.getDrawingBufferSize( canvasRenderTarget );
+		const { width, height } = canvasRenderTarget.getDrawingBufferSize( _vector2 );
 
 		return backend.device.createTexture( {
 			label,

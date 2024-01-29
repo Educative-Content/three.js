@@ -104,14 +104,6 @@ class Backend {
 
 	}
 
-	getDrawingBufferSize() {
-
-		vector2 = vector2 || new Vector2();
-
-		return this.renderer.getDrawingBufferSize( vector2 );
-
-	}
-
 	getScissor() {
 
 		vector4 = vector4 || new Vector4();

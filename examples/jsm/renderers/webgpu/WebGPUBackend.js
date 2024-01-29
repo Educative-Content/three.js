@@ -2,7 +2,7 @@
 import 'https://greggman.github.io/webgpu-avoid-redundant-state-setting/webgpu-check-redundant-state-setting.js';
 //*/
 
-import { WebGPUCoordinateSystem, Vector2 } from 'three';
+import { WebGPUCoordinateSystem } from 'three';
 
 import { GPUFeatureName, GPUTextureFormat, GPULoadOp, GPUStoreOp, GPUIndexFormat, GPUTextureViewDimension } from './utils/WebGPUConstants.js';
 
@@ -16,7 +16,6 @@ import WebGPUPipelineUtils from './utils/WebGPUPipelineUtils.js';
 import WebGPUTextureUtils from './utils/WebGPUTextureUtils.js';
 import WebGPU from '../../capabilities/WebGPU.js';
 
-let _vector2;
 //
 
 class WebGPUBackend extends Backend {
@@ -1210,14 +1209,6 @@ class WebGPUBackend extends Backend {
 		const canvasRenderTargetData = this.get( canvasRenderTarget );
 
 		canvasRenderTargetData.descriptor = null;
-
-	}
-
-	getDrawingBufferSize( canvasRenderTarget ) {
-
-		_vector2 = _vector2 || new Vector2();
-
-		return canvasRenderTarget.getDrawingBufferSize( _vector2 );
 
 	}
 
