@@ -12,7 +12,7 @@ import Background from './Background.js';
 import Nodes from './nodes/Nodes.js';
 import Color4 from './Color4.js';
 import ClippingContext from './ClippingContext.js';
-import { Scene, Frustum, Matrix4, Vector2, Vector3, Vector4, DoubleSide, BackSide, FrontSide, SRGBColorSpace, NoToneMapping } from 'three';
+import { Scene, Frustum, Matrix4, Vector2, Vector3, Vector4, DoubleSide, BackSide, FrontSide, NoToneMapping } from 'three';
 import CanvasRenderTarget from './CanvasRenderTarget.js';
 
 const _scene = new Scene();
@@ -49,8 +49,6 @@ class Renderer {
 		this.alpha = alpha;
 
 		this.logarithmicDepthBuffer = logarithmicDepthBuffer;
-
-		this.outputColorSpace = SRGBColorSpace;
 
 		this.toneMapping = NoToneMapping;
 		this.toneMappingExposure = 1.0;
@@ -429,9 +427,11 @@ class Renderer {
 			renderContext.height = renderTargetData.height;
 			renderContext.depth = renderTarget.depthBuffer;
 			renderContext.stencil = renderTarget.stencilBuffer;
+			renderContext.sampleCount = renderTarget.samples === 0 ? 1 : renderTarget.samples;
 
 		}
 
+		renderContext.colorSpace = this.currentColorSpace;
 		renderContext.renderTarget = renderTarget;
 		renderContext.width >>= activeMipmapLevel;
 		renderContext.height >>= activeMipmapLevel;
@@ -737,19 +737,33 @@ class Renderer {
 
 	}
 
+	get outputColorSpace() {
+
+		return this._defaultCanvasRenderTarget.outputColorSpace;
+
+	}
+
+	set outputColorSpace( colorSpace ) {
+
+		this._defaultCanvasRenderTarget.outputColorSpace = colorSpace;
+
+	}
+
 	get currentColorSpace() {
 
-		const renderTarget = this._renderTarget;
+		const renderTarget = this._renderTarget || this._defaultCanvasRenderTarget;
 
-		if ( renderTarget !== null && ! renderTarget.isCanvasRenderTarget ) {
+		if ( renderTarget.isCanvasRenderTarget ) {
+
+			return renderTarget.outputColorSpace;
+
+		} else {
 
 			const texture = renderTarget.texture;
 
 			return ( Array.isArray( texture ) ? texture[ 0 ] : texture ).colorSpace;
 
 		}
-
-		return this.outputColorSpace;
 
 	}
 

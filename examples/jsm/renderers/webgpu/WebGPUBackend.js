@@ -904,10 +904,12 @@ class WebGPUBackend extends Backend {
 
 		const utils = this.utils;
 
-		const sampleCount = utils.getSampleCount( renderObject.context );
-		const colorSpace = utils.getCurrentColorSpace( renderObject.context );
-		const colorFormat = utils.getCurrentColorFormat( renderObject.context );
-		const depthStencilFormat = utils.getCurrentDepthStencilFormat( renderObject.context );
+		const renderContext = renderObject.context;
+
+		const sampleCount = renderContext.sampleCount;
+		const colorSpace = renderContext.colorSpace;
+		const colorFormat = utils.getCurrentColorFormat( renderContext );
+		const depthStencilFormat = utils.getCurrentDepthStencilFormat( renderContext );
 		const primitiveTopology = utils.getPrimitiveTopology( object, material );
 
 		let needsUpdate = false;
@@ -969,8 +971,8 @@ class WebGPUBackend extends Backend {
 			material.stencilFail, material.stencilZFail, material.stencilZPass,
 			material.stencilFuncMask, material.stencilWriteMask,
 			material.side,
-			utils.getSampleCount( renderContext ),
-			utils.getCurrentColorSpace( renderContext ), utils.getCurrentColorFormat( renderContext ), utils.getCurrentDepthStencilFormat( renderContext ),
+			renderContext.sampleCount,
+			renderContext.colorSpace, utils.getCurrentColorFormat( renderContext ), utils.getCurrentDepthStencilFormat( renderContext ),
 			utils.getPrimitiveTopology( object, material ),
 			renderObject.clippingContextVersion
 		].join();

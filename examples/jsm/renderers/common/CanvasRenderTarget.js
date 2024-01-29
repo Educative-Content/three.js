@@ -1,4 +1,4 @@
-import { EventDispatcher, Vector4, REVISION, createCanvasElement } from 'three';
+import { EventDispatcher, Vector4, REVISION, createCanvasElement, SRGBColorSpace } from 'three';
 
 class CanvasRenderTarget extends EventDispatcher {
 
@@ -26,6 +26,7 @@ class CanvasRenderTarget extends EventDispatcher {
 		}
 
 		this.samples = this.sampleCount;
+		this.outputColorSpace = SRGBColorSpace;
 
 		this.depth = true;
 		this.stencil = true;

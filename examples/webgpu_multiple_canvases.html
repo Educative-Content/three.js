@@ -57,6 +57,7 @@
 			const geometries = [];
 			const materials = [];
 			const canvases = [];
+			const colorSpaces = [ THREE.NoColorSpace, THREE.SRGBColorSpace, THREE.LinearSRGBColorSpace ];
 
 			const container = document.getElementById( 'container' );
 
@@ -101,6 +102,8 @@
 			function makeCanvasRenderTarget( container ) {
 
 				const canvasRenderTarget = new CanvasRenderTarget( { antialias: Math.random() < 0.5 ? true : false } );
+
+				canvasRenderTarget.outputColorSpace = colorSpaces[ Math.floor( Math.random() * colorSpaces.length ) ];
 
 				const domElement = canvasRenderTarget.domElement;
 
@@ -153,7 +156,7 @@
 
 				}
 
-				renderer = new WebGPURenderer( { antialias: true } );
+				renderer = new WebGPURenderer();
 				renderer.setAnimationLoop( render );
 
 				stats = new Stats();
