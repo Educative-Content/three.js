@@ -25,7 +25,6 @@ class CanvasRenderTarget extends EventDispatcher {
 
 		}
 
-		this.samples = this.sampleCount;
 		this.outputColorSpace = SRGBColorSpace;
 
 		this.depth = true;
@@ -38,6 +37,14 @@ class CanvasRenderTarget extends EventDispatcher {
 		this.viewport = new Vector4( 0, 0, this._width, this._height );
 		this.scissor = new Vector4( 0, 0, this._width, this._height );
 		this._scissorTest = false;
+
+		this.version = 0;
+
+	}
+
+	set needsUpdate( value ) {
+
+		if ( value === true ) this.version ++;
 
 	}
 
@@ -57,6 +64,24 @@ class CanvasRenderTarget extends EventDispatcher {
 		}
 
 		return domElement;
+
+	}
+
+	get samples() {
+
+		return this.sampleCount;
+
+	}
+
+	get depthBuffer() {
+
+		return this.depth;
+
+	}
+
+	get stencilBuffer() {
+
+		return this.stencil;
 
 	}
 
@@ -98,7 +123,7 @@ class CanvasRenderTarget extends EventDispatcher {
 
 		this.setViewport( 0, 0, width, height );
 
-		//if ( this._initialized ) this.backend.updateSize();
+		this.needsUpdate = true;
 
 	}
 
@@ -119,7 +144,7 @@ class CanvasRenderTarget extends EventDispatcher {
 
 		this.setViewport( 0, 0, width, height );
 
-		//if ( this._initialized ) this.backend.updateSize();
+		this.needsUpdate = true;
 
 	}
 

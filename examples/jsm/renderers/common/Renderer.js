@@ -411,9 +411,6 @@ class Renderer {
 			renderContext.depthTexture = null;
 			renderContext.width = renderTarget.domElement.width;
 			renderContext.height = renderTarget.domElement.height;
-			renderContext.depth = renderTarget.depth;
-			renderContext.stencil = renderTarget.stencil;
-			renderContext.sampleCount = renderTarget.sampleCount;
 
 		} else {
 
@@ -425,8 +422,6 @@ class Renderer {
 			renderContext.depthTexture = renderTargetData.depthTexture;
 			renderContext.width = renderTargetData.width;
 			renderContext.height = renderTargetData.height;
-			renderContext.depth = renderTarget.depthBuffer;
-			renderContext.stencil = renderTarget.stencilBuffer;
 
 		}
 
@@ -551,21 +546,13 @@ class Renderer {
 
 	setDrawingBufferSize( width, height, pixelRatio ) {
 
-		const canvasRenderTarget = this._defaultCanvasRenderTarget;
-
-		canvasRenderTarget.setDrawingBufferSize( width, height, pixelRatio );
-
-		if ( this._initialized ) this.backend.updateSize( canvasRenderTarget );
+		this._defaultCanvasRenderTarget.setDrawingBufferSize( width, height, pixelRatio );
 
 	}
 
 	setSize( width, height, updateStyle = true ) {
 
-		const canvasRenderTarget = this._defaultCanvasRenderTarget;
-
-		canvasRenderTarget.setSize( width, height, updateStyle );
-
-		if ( this._initialized ) this.backend.updateSize( canvasRenderTarget );
+		this._defaultCanvasRenderTarget.setSize( width, height, updateStyle );
 
 	}
 

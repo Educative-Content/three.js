@@ -981,12 +981,6 @@ class WebGLBackend extends Backend {
 
 	}
 
-	updateSize() {
-
-		//console.warn( 'Abstract class.' );
-
-	}
-
 	async hasFeatureAsync( name ) {
 
 		return this.hasFeature( name );

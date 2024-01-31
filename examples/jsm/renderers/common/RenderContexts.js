@@ -38,9 +38,11 @@ class RenderContexts {
 
 			chainMap.set( chainKey, renderState );
 
-		}
+			renderState.sampleCount = renderTarget.samples === 0 ? 1 : renderTarget.samples;
+			renderState.depth = renderTarget.depthBuffer;
+			renderState.stencil = renderTarget.stencilBuffer;
 
-		if ( ! renderTarget.isCanvasRenderTarget ) renderState.sampleCount = renderTarget.samples === 0 ? 1 : renderTarget.samples;
+		}
 
 		return renderState;
 

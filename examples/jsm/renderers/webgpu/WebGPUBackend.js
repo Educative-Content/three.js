@@ -92,7 +92,6 @@ class WebGPUBackend extends Backend {
 
 	_configureContext( canvasRenderTarget ) {
 
-		// FIXME
 		const context = ( canvasRenderTarget.context !== undefined ) ? canvasRenderTarget.context : canvasRenderTarget.domElement.getContext( 'webgpu' );
 		const canvasRenderTargetData = this.get( canvasRenderTarget );
 
@@ -106,7 +105,6 @@ class WebGPUBackend extends Backend {
 		} );
 
 		canvasRenderTargetData.contextGPU = context;
-		canvasRenderTargetData.descriptor = null;
 		canvasRenderTargetData.ready = true;
 
 	};
@@ -139,9 +137,7 @@ class WebGPUBackend extends Backend {
 
 		let { contextGPU, descriptor } = canvasRenderTargetData;
 
-		if ( descriptor === null ) {
-
-			const renderer = this.renderer;
+		if ( canvasRenderTarget.version !== canvasRenderTargetData.version ) {
 
 			descriptor = {
 				colorAttachments: [ {
@@ -165,6 +161,7 @@ class WebGPUBackend extends Backend {
 			}
 
 			canvasRenderTargetData.descriptor = descriptor;
+			canvasRenderTargetData.version = canvasRenderTarget.version;
 
 		}
 
@@ -1199,16 +1196,6 @@ class WebGPUBackend extends Backend {
 	destroyAttribute( attribute ) {
 
 		this.attributeUtils.destroyAttribute( attribute );
-
-	}
-
-	// canvas
-
-	updateSize( canvasRenderTarget ) {
-
-		const canvasRenderTargetData = this.get( canvasRenderTarget );
-
-		canvasRenderTargetData.descriptor = null;
 
 	}
 
