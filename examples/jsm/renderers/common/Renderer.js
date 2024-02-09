@@ -78,6 +78,7 @@ class Renderer {
 		this._background = null;
 
 		this._defaultCanvasRenderTarget = new CanvasRenderTarget( Object.assign( {}, parameters, { domElement: this.domElement } ) );
+		this._activeCanvas = null;
 		this._currentRenderContext = null;
 
 		this._opaqueSort = null;
@@ -412,6 +413,8 @@ class Renderer {
 			renderContext.width = renderTarget.domElement.width;
 			renderContext.height = renderTarget.domElement.height;
 
+			this._activeCanvas = renderTarget;
+
 		} else {
 
 			this._textures.updateRenderTarget( renderTarget, activeMipmapLevel );
@@ -526,15 +529,33 @@ class Renderer {
 
 	}
 
+	getActivePixelRatio() {
+
+		return this._activeCanvas.pixelRatio;
+
+	}
+
 	getDrawingBufferSize( target ) {
 
 		return this._defaultCanvasRenderTarget.getDrawingBufferSize( target );
 
 	}
 
+	getActiveDrawingBufferSize( target ) {
+
+		return this._activeCanvas.getDrawingBufferSize( target );
+
+	}
+
 	getSize( target ) {
 
 		return this._defaultCanvasRenderTarget.getSize( target );
+
+	}
+
+	getActiveSize( target ) {
+
+		return this._activeCanvas.getSize( target );
 
 	}
 
