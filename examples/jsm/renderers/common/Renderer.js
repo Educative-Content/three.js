@@ -621,6 +621,12 @@ class Renderer {
 
 	}
 
+	getActiveViewport( target ) {
+
+		return this._activeCanvas.getViewport( target );
+
+	}
+
 	setViewport( x, y, width, height, minDepth = 0, maxDepth = 1 ) {
 
 		return this._defaultCanvasRenderTarget.setViewport( x, y, width, height, minDepth, maxDepth );
