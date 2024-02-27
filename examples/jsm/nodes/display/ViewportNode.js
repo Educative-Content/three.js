@@ -45,11 +45,11 @@ class ViewportNode extends Node {
 
 		if ( this.scope === ViewportNode.VIEWPORT ) {
 
-			renderer.getViewport( viewportResult );
+			renderer.getActiveViewport( viewportResult );
 
 		} else {
 
-			renderer.getDrawingBufferSize( resolution );
+			renderer.getActiveDrawingBufferSize( resolution );
 
 		}
 

@@ -25,7 +25,7 @@ class WebGPUPipelineUtils {
 
 	createRenderPipeline( renderObject, promises ) {
 
-		const { object, material, geometry, pipeline } = renderObject;
+		const { object, material, geometry, pipeline, context } = renderObject;
 		const { vertexProgram, fragmentProgram } = pipeline;
 
 		const backend = this.backend;
@@ -68,9 +68,9 @@ class WebGPUPipelineUtils {
 
 		const targets = [];
 
-		if ( renderObject.context.textures !== null ) {
+		if ( context.textures !== null ) {
 
-			const textures = renderObject.context.textures;
+			const textures = context.textures;
 
 			for ( let i = 0; i < textures.length; i ++ ) {
 
@@ -86,7 +86,7 @@ class WebGPUPipelineUtils {
 
 		} else {
 
-			const colorFormat = utils.getCurrentColorFormat( renderObject.context );
+			const colorFormat = utils.getCurrentColorFormat( context );
 
 			targets.push( {
 				format: colorFormat,
@@ -101,8 +101,8 @@ class WebGPUPipelineUtils {
 
 		const primitiveState = this._getPrimitiveState( object, geometry, material );
 		const depthCompare = this._getDepthCompare( material );
-		const depthStencilFormat = utils.getCurrentDepthStencilFormat( renderObject.context );
-		let sampleCount = utils.getSampleCount( renderObject.context );
+		const depthStencilFormat = utils.getCurrentDepthStencilFormat( context );
+		let sampleCount = context.sampleCount;
 
 		if ( sampleCount > 1 ) {
 
