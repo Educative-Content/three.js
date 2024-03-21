@@ -49,7 +49,11 @@ class TrackballControls extends EventDispatcher {
 
 		this.keys = [ 'KeyA' /*A*/, 'KeyS' /*S*/, 'KeyD' /*D*/ ];
 
-		this.mouseButtons = { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.PAN };
+		this.mouseButtons = {
+			[ MOUSE.LEFT ]: STATE.ROTATE,
+			[ MOUSE.MIDDLE ]: STATE.DOLLY,
+			[ MOUSE.RIGHT ]: STATE.PAN
+		};
 
 		// internals
 
@@ -538,22 +542,7 @@ class TrackballControls extends EventDispatcher {
 
 			if ( _state === STATE.NONE ) {
 
-				switch ( event.button ) {
-
-					case scope.mouseButtons.LEFT:
-						_state = STATE.ROTATE;
-						break;
-
-					case scope.mouseButtons.MIDDLE:
-						_state = STATE.ZOOM;
-						break;
-
-					case scope.mouseButtons.RIGHT:
-						_state = STATE.PAN;
-						break;
-
-				}
-
+				_state = scope.mouseButtons[ event.button ] || STATE.NONE;
 			}
 
 			const state = ( _keyState !== STATE.NONE ) ? _keyState : _state;
